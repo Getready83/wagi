@@ -13,31 +13,39 @@ import sys
 
 ilosc_elementow = int(sys.argv[1])
 waga_paczki = 0
-ilosc_paczek = 0
-ilosc_pustych_kilogramow = 0
+paczki_zamkniete = 0
+puste_kilogramy = 0
 suma_kilogramow = 0
 
 print("Witamy w uniwersalnym zautomatyzowanym pakowaczu")
 for nr in range(ilosc_elementow):
 
-#    print("podaj ile elementów chcesz zapakować: ")
-#    ilosc_elementow = int(input())
-
     print("podaj wagę: ")
     waga_elementu = float(input())
+    suma_kilogramow = suma_kilogramow + waga_elementu
     waga_paczki = waga_paczki + waga_elementu
-    suma_kilogramow = waga_paczki
-    print("waga :",waga_paczki)
-
-#   ilosc_pustych_kilogramow =
-#   ilość_paczek = paczka1 + paczka2 + paczka3
+#    print("całkowita waga elementow :", suma_kilogramow)
     if waga_elementu == 0:
         print("Koniec wysłania")
         break
-    if waga_elementu < 1 or waga_elementow > 10:
+
+    if waga_elementu < 1 or waga_elementu > 10:
         print("Blad !!! niewłaściwa waga przedmiotu, prosze podac wage "
               "w przedziale od 1 kg do 10 kg")
         break
+
+    if waga_paczki + waga_elementu <= 20:
+        waga_paczki = waga_paczki + waga_elementu
+    else:
+        paczki_zamkniete = paczki_zamkniete + 1
+        waga_paczki = waga_elementu
+        print("nr paczki", paczki_zamkniete)
+
+
+
+#   ilosc_pustych_kilogramow =
+#   ilość_paczek = paczka1 + paczka2 + paczka3
+
 
 #    if waga_paczki >= 20:
 #       print("nastepna paczka")
@@ -45,8 +53,10 @@ for nr in range(ilosc_elementow):
 
 
 
+if waga_elementu < 1 or waga_elementu > 10:
+    print("zacznij od nowa")
 
-#print(f"liczba paczek wysłanych {ilosc_paczek} szt")
+print(f"liczba paczek wysłanych {paczki_zamkniete} szt")
 print(f"Suma kilogramów wysłanych {suma_kilogramow} kg")
 #print (f"liczba pustych kilogramów {} kg")
 #print(f" która paczka miała najwiecej pustych kilogramów {}?")
