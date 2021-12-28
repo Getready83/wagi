@@ -6,20 +6,20 @@
 
 over100 = False
 print("Ciąg Collatza\npodaj liczbę od 1 do 100")
-n = int(input())
-if n > 100:
+x = int(input())
+if x > 100:
     over100 = True
-while n >= 1:
+while x >= 1:
 
-    if n % 2 == 0:
-        n = n / 2
-    elif n % 2 == 1:
-        n = 3 * n + 1
+    if x % 2 == 0:
+        x = x / 2
+    elif x % 2 == 1:
+        x = 3 * x + 1
 
-    if n == 1:
+    if x == 1:
         break
 
     if not over100:
-        print(n)
+        print(x)
     else:
         print("Miałes podać liczbę od 1 do 100 !!!")
