@@ -5,8 +5,8 @@
 # wypisz ciąg
 
 over100 = False
-liczba = 0
-suma_liczb = 0
+krok = 0
+max_krok = 0
 print("Ciąg Collatza\npodaj liczbę od 1 do 100")
 x = int(input())
 if x > 100:
@@ -18,14 +18,16 @@ while x >= 1:
     elif x % 2 == 1:
         x = 3 * x + 1
     if x > 1:
-        liczba = liczba + 1
-        print("liczba {}".format(liczba))
-
+        krok = krok + 1
+#        print("krok {}".format(krok))
+        if krok > max_krok:
+            max_krok = krok
     if x == 1:
         break
-
     elif not over100:
-        print("{}".format(x))
+        print("{:.0f}".format(x))
     else:
         print("Miałes podać liczbę od 1 do 100 !!!")
+print(f"Długość ciągu to: {max_krok} kroki.")
+
 # Nie wiem dlaczego wypisuje to aż tyle razy  ???
