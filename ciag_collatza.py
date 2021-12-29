@@ -5,6 +5,8 @@
 # wypisz ciąg
 
 over100 = False
+liczba = 0
+suma_liczb = 0
 print("Ciąg Collatza\npodaj liczbę od 1 do 100")
 x = int(input())
 if x > 100:
@@ -15,13 +17,15 @@ while x >= 1:
         x /= 2
     elif x % 2 == 1:
         x = 3 * x + 1
+    if x > 1:
+        liczba = liczba + 1
+        print("liczba {}".format(liczba))
 
     if x == 1:
         break
 
     elif not over100:
-        print(x)
+        print("{}".format(x))
     else:
         print("Miałes podać liczbę od 1 do 100 !!!")
-
 # Nie wiem dlaczego wypisuje to aż tyle razy  ???
