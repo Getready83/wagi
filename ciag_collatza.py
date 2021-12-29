@@ -12,14 +12,16 @@ if x > 100:
 while x >= 1:
 
     if x % 2 == 0:
-        x = x / 2
+        x /= 2
     elif x % 2 == 1:
         x = 3 * x + 1
 
     if x == 1:
         break
 
-    if not over100:
+    elif not over100:
         print(x)
     else:
         print("Miałes podać liczbę od 1 do 100 !!!")
+
+# Nie wiem dlaczego wypisuje to aż tyle razy  ???
