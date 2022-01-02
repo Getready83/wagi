@@ -24,10 +24,13 @@ while x >= 1:
             max_krok = krok
     if x == 1:
         break
-    elif not over100:
+    if not over100:
         print("{:.0f}".format(x))
-    else:
-        print("Miałes podać liczbę od 1 do 100 !!!")
-print(f"Długość ciągu to: {max_krok} kroki.")
+if not over100:
+    print("{:.0f}".format(x))
+    print(f"Długość ciągu to: {max_krok} kroki.")
+else:
+    print("Miałes podać liczbę od 1 do 100 !!!")
+
 
 # Nie wiem dlaczego wypisuje to aż tyle razy  ???
