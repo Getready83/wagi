@@ -1,4 +1,4 @@
-#import sys
+import sys
 
 """a = sys.argv[1]
 b = sys.argv[1]
@@ -7,14 +7,14 @@ if sys.argv[1] != "saldo" and sys.argv[1] != "zakup" and sys.argv[1] != "sprzeda
     print("Niewłaściwe polecenie")
 """
 
-saldo_lista = []
+historia = []
 magazyn = {}
-#magazyn ["raspbbery"] = 4
-zdarzenie = 0
-kwota = 0
 saldo = 0
 while True:
     dostep = input("podaj akcję: ")
+    if dostep != "saldo" and dostep != "zakup" and dostep != "sprzedaz": #and dostep != "stop":
+        print("Niewłaściwe polecenie")
+        break
     if dostep == "saldo":
         kwota = int(input("Podaj kwote: "))
         saldo = saldo + kwota
@@ -22,13 +22,9 @@ while True:
             print("Brak srodkow")
             break
         komentarz =(input("Komentarz: "))
-        zdarzenie = kwota, komentarz
-        saldo_lista.append(zdarzenie)
-
-
-    if dostep != "saldo" and dostep != "zakup" and dostep != "sprzedaz":
-        print("Niewłaściwe polecenie")
-        break
+        historia.append("saldo")
+        historia.append(kwota)
+        historia.append(komentarz)
     if dostep == "zakup":
         nazwa = input("Podaj nazwę produktu: ")
         cena = int(input("Podaj cenę: "))
@@ -42,6 +38,11 @@ while True:
         else:
             magazyn[nazwa] = ilosc
         saldo -= cena * ilosc
+        zdarzenie = nazwa, ilosc
+        historia.append("zakup")
+        historia.append(nazwa)
+        historia.append(cena)
+        historia.append(ilosc)
     if dostep == "sprzedaz":
         nazwa = input("Podaj nazwę produktu: ")
         if nazwa not in magazyn:
@@ -54,15 +55,24 @@ while True:
                 magazyn[nazwa] -= ilosc
                 saldo += cena * ilosc
             else:
-#                magazyn[nazwa]
                 saldo -= cena * ilosc
                 print("za mała ilosc w magazynie")
-
-
- #           magazyn[nazwa] -= ilosc
- #           magazyn[nazwa] += ilosc
-
-print(saldo_lista)
-#    print(zdarzenie)
+        historia.append("sprzedaz")
+        historia.append(nazwa)
+        historia.append(cena)
+        historia.append(ilosc)
+#    if dostep == "stop":
+for i in historia[1:]:
+    print(i)
 print(saldo)
-print(magazyn)
+for k, v in magazyn.items():
+    print("{}: {}" .format(k, v))
+
+#dostep = sys.argv[1]
+
+"""log = [historia,saldo,magazyn]
+for nr in sys.argv[1]:
+saldo = sys.argv[1]
+print(sys.argv[1])
+#historia = sys.argv[1]
+"""
