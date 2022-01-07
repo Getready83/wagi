@@ -1,18 +1,11 @@
 import sys
 
-"""a = sys.argv[1]
-b = sys.argv[1]
-c = sys.argv[1]
-if sys.argv[1] != "saldo" and sys.argv[1] != "zakup" and sys.argv[1] != "sprzedaz":
-    print("Niewłaściwe polecenie")
-"""
-
 historia = []
 magazyn = {}
 saldo = 0
 while True:
     dostep = input("podaj akcję: ")
-    if dostep != "saldo" and dostep != "zakup" and dostep != "sprzedaz": #and dostep != "stop":
+    if dostep != "saldo" and dostep != "zakup" and dostep != "sprzedaz":
         print("Niewłaściwe polecenie")
         break
     if dostep == "saldo":
@@ -21,7 +14,7 @@ while True:
         if saldo < 0:
             print("Brak srodkow")
             break
-        komentarz =(input("Komentarz: "))
+        komentarz = (input("Komentarz: "))
         historia.append("saldo")
         historia.append(kwota)
         historia.append(komentarz)
@@ -31,7 +24,7 @@ while True:
         ilosc = int(input("Podaj ilość:"))
         if saldo - (cena * ilosc) < 0:
             print("Nie masz wystarczających środków finansowych."
-                  "Twoje saldo to:",saldo)
+                  "Twoje saldo to:", saldo)
             continue
         if nazwa in magazyn:
             magazyn[nazwa] += ilosc
@@ -61,16 +54,29 @@ while True:
         historia.append(nazwa)
         historia.append(cena)
         historia.append(ilosc)
-#    if dostep == "stop":
-for i in historia[1:]:
-    print(i)
+print(historia)
+print(magazyn)
 print(saldo)
-for k, v in magazyn.items():
-    print("{}: {}" .format(k, v))
+if len(sys.argv) < 3:
+    if sys.argv[1] == "saldo":
+        print(saldo)
+    if sys.argv[1] == "historia":
+        for i in historia:
+            print(i)
+    if sys.argv[1] == "magazyn":
+        for k, v in magazyn.items():
+            print("{}: {}" .format(k, v))
+
+
+
+
+"""historia == sys.argv[1]
+for i in range(1,len(historia)):
+    print(historia)
 
 #dostep = sys.argv[1]
 
-"""log = [historia,saldo,magazyn]
+log = [historia,saldo,magazyn]
 for nr in sys.argv[1]:
 saldo = sys.argv[1]
 print(sys.argv[1])
