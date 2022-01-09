@@ -19,8 +19,9 @@ while True:
         historia.append("saldo")
         historia.append(kwota)
         historia.append(komentarz)
-        przeglad == historia
-    if dostep == "zakup":  #and sys.argv[1] == "zakup":
+        zdarzenie = "saldo", kwota, komentarz
+        przeglad.append(zdarzenie)
+    if dostep == "zakup":
         nazwa = input("Podaj nazwę produktu: ")
         cena = int(input("Podaj cenę: "))
         ilosc = int(input("Podaj ilość:"))
@@ -33,12 +34,12 @@ while True:
         else:
             magazyn[nazwa] = ilosc
         saldo -= cena * ilosc
-        zdarzenie = nazwa, ilosc
         historia.append("zakup")
         historia.append(nazwa)
         historia.append(cena)
         historia.append(ilosc)
-        przeglad = "zakup", nazwa, cena, ilosc
+        zdarzenie = "zakup", nazwa, cena, ilosc
+        przeglad.append(zdarzenie)
     if dostep == "sprzedaz":
         nazwa = input("Podaj nazwę produktu: ")
         if nazwa not in magazyn:
@@ -51,12 +52,14 @@ while True:
                 magazyn[nazwa] -= ilosc
                 saldo += cena * ilosc
             else:
-                saldo -= cena * ilosc
                 print("za mała ilosc w magazynie")
+                continue
         historia.append("sprzedaz")
         historia.append(nazwa)
         historia.append(cena)
         historia.append(ilosc)
+        zdarzenie = "sprzedaz", nazwa, cena, ilosc
+        przeglad.append(zdarzenie)
         if sys.argv[1] == "zakup":
             nazwa = sys.argv[2]
             cena = int(sys.argv[3])
@@ -64,17 +67,17 @@ while True:
             if saldo - (cena * ilosc) < 0:
                 print("Nie masz wystarczających środków finansowych."
                       "Twoje saldo to:", saldo)
-                continue
             if nazwa in magazyn:
                 magazyn[nazwa] += ilosc
             else:
                 magazyn[nazwa] = ilosc
             saldo -= cena * ilosc
-            zdarzenie = nazwa, ilosc
             historia.append("zakup")
             historia.append(nazwa)
             historia.append(cena)
             historia.append(ilosc)
+            zdarzenie = "zakup", nazwa, cena, ilosc
+            przeglad.append(zdarzenie)
         if sys.argv[1] == "sprzedaz":
             nazwa = sys.argv[2]
             if nazwa not in magazyn:
@@ -87,29 +90,41 @@ while True:
                     magazyn[nazwa] -= ilosc
                     saldo += cena * ilosc
                 else:
-                    saldo -= cena * ilosc
                     print("za mała ilosc w magazynie")
+                    continue
             historia.append("sprzedaz")
             historia.append(nazwa)
             historia.append(cena)
             historia.append(ilosc)
-print(przeglad)
+            zdarzenie = "sprzedaz", nazwa, cena, ilosc
+            przeglad.append(zdarzenie)
 
 """print(historia)
 print(magazyn)
-print(saldo)"""
-#while True:
-a = len(sys.argv)
-for nr in range(a - 1):
-#if len(sys.argv) < 5:
-    if sys.argv[1] == "saldo":
-        print(saldo)
-    if sys.argv[1] == "historia" or "zakup" or "sprzedaz":
-        for i in historia:
-            print(i)
+print(saldo)
+print(przeglad)
+while True:"""
+
+#  for i in range(len(sys.argv)):
+for i in range(1):
+    if sys.argv[1] == "historia":
+        for a in historia:
+            print(a)
     if sys.argv[1] == "magazyn":
         for k, v in magazyn.items():
             print("{}: {}" .format(k, v))
+    if sys.argv[1] == "saldo":
+        print(saldo)
     if sys.argv[1] == "przeglad":
-        print(przeglad)
+        od = int(sys.argv[2])
+        do = int(sys.argv[3])
+        print(przeglad[od:do])
+    if sys.argv[1] == "zakup" or "sprzedaz":  # ??????
+        for b in historia:
+            print(b)
 
+# jak można zlikwidowac linie komend w outpucie ???
+# cos nie gra z zakup i sprzedaz sys.argv ????
+# przy saldzie drukuje mi sie historia
+# czy konto i saldo to to samo ???
+# zostało spradzenie magazynu po nazwie
