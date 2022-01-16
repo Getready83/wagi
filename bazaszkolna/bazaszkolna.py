@@ -1,4 +1,4 @@
-import sys
+#import sys
 
 wychowawcy = []
 nauczyciele = []
@@ -23,12 +23,11 @@ class GrupaSzkolna:
         print(self.uczniowie)
 
 
-"""def pobierz_numer_grupy(numer):
+def pobierz_numer_grupy(numer):
     if numer not in grupy:
         grupa = GrupaSzkolna(numer)
         grupy[numer] = grupa
     return grupy[numer]
-print(grupy)"""
 
 
 class Wychowawca:
@@ -46,8 +45,8 @@ class Wychowawca:
             if not klasa:
                 break
             klasy.append(klasa)
-#            grupa = pobierz_numer_grupy(self.klasy)
-#            grupa.wychowawca = self
+            grupa = pobierz_numer_grupy(self.klasy)
+            grupa.wychowawca = self
 
     def drukuj(self):
         print(self.imie_nazwisko)
@@ -72,8 +71,8 @@ class Nauczyciel:
             if not klasa:
                 break
             klasy.append(klasa)
-#            grupa = pobierz_numer_grupy(self.klasy)
-#            grupa.nauczyciel.append(self)
+            grupa = pobierz_numer_grupy(self.klasy)
+            grupa.nauczyciel.append(self)
 
     def drukuj(self):
         print(self.imie_nazwisko)
@@ -91,8 +90,8 @@ class Uczen:
         klasa = input()
         self.imie_nazwisko = imie_nazwisko
         self.klasa = klasa
-#        grupa = pobierz_numer_grupy(self.klasa)
-#        grupa.uczniowie.append(self)
+        grupa = pobierz_numer_grupy(self.klasa)
+        grupa.uczniowie.append(self)
 
     def drukuj(self):
         print(self.imie_nazwisko)
@@ -116,16 +115,17 @@ while True:
     if typ_uzytkownika == "koniec":
         break
 
-
-if sys.argv[1] in wychowawcy:
+#phrase = str(sys.argv[1])
+#if phrase in wychowawcy:
     for wychowawca in wychowawcy:
         wychowawca.drukuj()
-        print(wychowawca)
-"""    
-for nauczyciel in nauczyciele:
-    nauczyciel.drukuj()
-print(nauczyciele)
-for uczen in uczniowie:
-    uczen.drukuj()
-print(uczniowie)
-"""
+    print(wychowawcy)
+    for nauczyciel in nauczyciele:
+        nauczyciel.drukuj()
+    print(nauczyciele)
+    for uczen in uczniowie:
+        uczen.drukuj()
+    print(uczniowie)
+    for numer in grupy:
+        numer.drukuj()
+    print(grupy)
