@@ -1,26 +1,7 @@
-#import sys
+import sys
 
-wychowawcy = []
-nauczyciele = []
-uczniowie = []
+osoby = {}
 grupy = {}
-
-
-class GrupaSzkolna:
-    def __init__(self, numer):
-        self.numer = numer
-        self.wychowawca = None
-        self.nauczyciele = []
-        self.uczniowie = []
-
-    def numer_klasy(self):
-        self.numer = True
-
-    def drukuj(self):
-        print(self.numer)
-        print(self.wychowawca)
-        print(self.nauczyciele)
-        print(self.uczniowie)
 
 
 def pobierz_numer_grupy(numer):
@@ -30,27 +11,45 @@ def pobierz_numer_grupy(numer):
     return grupy[numer]
 
 
+class GrupaSzkolna:
+    def __init__(self, numer):
+        self.numer = numer
+        self.wychowawca = None
+        self.nauczyciele = []
+        self.uczniowie = []
+        self.wychowawcy = []
+
+    def numer_klasy(self):
+        self.numer = True
+
+    def drukuj(self):
+        print(self.wychowawca.imie_nazwisko)
+        for uczen in self.uczniowie:  # wyszukujemy danych dla ucznia
+            print(uczen.imie_nazwisko)
+
+
 class Wychowawca:
     def __init__(self):
         self.imie_nazwisko = ""
         self.klasy = []
 
-    def wczytanie_wychowawcy(self):
-        imie_nazwisko = input()
-        klasy = []
-        self.imie_nazwisko = imie_nazwisko
-        self.klasy = klasy
+    def wczytanie(self):
+        self.imie_nazwisko = input()
+        self.klasy = []
         while True:
             klasa = input()
             if not klasa:
                 break
-            klasy.append(klasa)
-            grupa = pobierz_numer_grupy(self.klasy)
+            self.klasy.append(klasa)
+            grupa = pobierz_numer_grupy(klasa)
             grupa.wychowawca = self
+            grupa.wychowawcy.append(self)
 
     def drukuj(self):
-        print(self.imie_nazwisko)
-        print(self.klasy)
+        for klasa in self.klasy:
+            print(klasa)
+            for uczen in grupy[klasa].uczniowie:
+                print(uczen.imie_nazwisko)
 
 
 class Nauczyciel:
@@ -59,25 +58,22 @@ class Nauczyciel:
         self.przedmiot = ""
         self.klasy = []
 
-    def wczytanie_nauczyciela(self):
-        imie_nazwisko = input()
-        przedmiot = input()
-        klasy = []
-        self.imie_nazwisko = imie_nazwisko
-        self.przedmiot = przedmiot
-        self.klasy = klasy
+    def wczytanie(self):
+        self.imie_nazwisko = input()
+        self.przedmiot = input()
+        self.klasy = []
         while True:
             klasa = input()
             if not klasa:
                 break
-            klasy.append(klasa)
-            grupa = pobierz_numer_grupy(self.klasy)
-            grupa.nauczyciel.append(self)
+            self.klasy.append(klasa)
+            grupa = pobierz_numer_grupy(klasa)
+            grupa.nauczyciele.append(self)
 
     def drukuj(self):
-        print(self.imie_nazwisko)
-        print(self.przedmiot)
-        print(self.klasy)
+        for klasa in self.klasy:
+            for wychowawca in grupy[klasa].wychowawcy:
+                print(wychowawca.imie_nazwisko)
 
 
 class Uczen:
@@ -85,47 +81,34 @@ class Uczen:
         self.imie_nazwisko = ""
         self.klasa = ""
 
-    def wczytywanie_ucznia(self):
-        imie_nazwisko = input()
-        klasa = input()
-        self.imie_nazwisko = imie_nazwisko
-        self.klasa = klasa
+    def wczytanie(self):
+        self.imie_nazwisko = input()
+        self.klasa = input()
         grupa = pobierz_numer_grupy(self.klasa)
         grupa.uczniowie.append(self)
 
     def drukuj(self):
-        print(self.imie_nazwisko)
-        print(self.klasa)
+        for nauczyciel in grupy[self.klasa].nauczyciele:
+            print(nauczyciel.przedmiot, "\n", nauczyciel.imie_nazwisko)
 
 
 while True:
     typ_uzytkownika = input()
-    if typ_uzytkownika == "wychowawca":
-        wychowawca = Wychowawca()
-        wychowawca.wczytanie_wychowawcy()
-        wychowawcy.append(wychowawca)
-    if typ_uzytkownika == "nauczyciel":
-        nauczyciel = Nauczyciel()
-        nauczyciel.wczytanie_nauczyciela()
-        nauczyciele.append(nauczyciel)
-    if typ_uzytkownika == "uczen":
-        uczen = Uczen()
-        uczen.wczytywanie_ucznia()
-        uczniowie.append(uczen)
     if typ_uzytkownika == "koniec":
         break
+    if typ_uzytkownika == "wychowawca":
+        osoba = Wychowawca()
+        grupa = Wychowawca()
+    if typ_uzytkownika == "nauczyciel":
+        osoba = Nauczyciel()
+    if typ_uzytkownika == "uczen":
+        osoba = Uczen()
 
-#phrase = str(sys.argv[1])
-#if phrase in wychowawcy:
-    for wychowawca in wychowawcy:
-        wychowawca.drukuj()
-    print(wychowawcy)
-    for nauczyciel in nauczyciele:
-        nauczyciel.drukuj()
-    print(nauczyciele)
-    for uczen in uczniowie:
-        uczen.drukuj()
-    print(uczniowie)
-    for numer in grupy:
-        numer.drukuj()
-    print(grupy)
+    osoba.wczytanie()
+    osoby[osoba.imie_nazwisko] = osoba
+
+phrase = (sys.argv[1])
+if phrase in grupy:
+    grupy[phrase].drukuj()
+if phrase in osoby:
+    osoby[phrase].drukuj()
