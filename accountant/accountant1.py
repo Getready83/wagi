@@ -59,6 +59,7 @@ class Saldo:
         plik.write("saldo\n")
         plik.write(f"{self.kwota}\n")
         plik.write(f"{self.komentarz}\n")
+        return (self.kwota , self.komentarz)
 
 
 
@@ -106,6 +107,7 @@ class Zakup:
         plik.write(f"{self.nazwa}\n")
         plik.write(f"{self.cena}\n")
         plik.write(f"{self.ilosc}\n")
+        return (self.nazwa , self.cena , self.ilosc)
 
 
 class Sprzedaz:
@@ -152,6 +154,7 @@ class Sprzedaz:
         plik.write(f"{self.nazwa}\n")
         plik.write(f"{self.cena}\n")
         plik.write(f"{self.ilosc}\n")
+        return (self.nazwa , self.cena , self.ilosc)
 
 
 
