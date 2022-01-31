@@ -39,8 +39,6 @@ with open(sys.argv[1], 'r') as plik:
                 break
             historia.append(akcja)
 if sys.argv[0] == "przeglad.py":
-    od = int(sys.argv[2])
-    do = int(sys.argv[3])
-with open("przeglad.txt", "w") as plik:
-    for akcja in historia[od:do +1]:
-        print(akcja.zapisz(plik))
+    with open("przeglad.txt", "w") as plik:
+        for akcja in historia[int(sys.argv[2]): int(sys.argv[3]) + 1]:
+            print(akcja.zapisz(plik))

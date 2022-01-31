@@ -5,6 +5,7 @@ konto = 0
 magazyn = {}
 historia = []
 
+
 with open(sys.argv[1], 'r') as plik:
     while True:
         linia = plik.readline()
