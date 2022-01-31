@@ -1,6 +1,5 @@
 import sys
-from accountant1 import wczytaj_parametry, Saldo, Zakup, Sprzedaz
-
+from accountant1 import Saldo, Zakup, Sprzedaz
 
 historia = []
 magazyn = {}
@@ -39,12 +38,3 @@ with open(sys.argv[1], 'r') as plik:
             if not status:
                 break
             historia.append(akcja)
-
-
-
-
-
-
-
-
-
