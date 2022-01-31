@@ -5,6 +5,7 @@ magazyn = {}
 przeglad = []
 konto = 0
 
+
 while True:
     dostep = input()
     if dostep != "saldo" and dostep != "zakup" and dostep != "sprzedaz":
