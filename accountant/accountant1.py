@@ -1,4 +1,5 @@
 import sys
+
 historia = []
 magazyn = {}
 konto = 0
@@ -32,7 +33,6 @@ class Saldo:
         if not status:
             print("Blad - niewlasciwe parametry dla salda")
             return False
-#lista jest = ["1000","wplata"]
         self.kwota = int(lista[0])
         self.komentarz = lista[1]
         return True
@@ -42,10 +42,8 @@ class Saldo:
         if not status:
             print("Blad - niewlasciwe parametry dla salda")
             return False
-        # lista jest = ["1000","wplata"]
         self.kwota = int(sys.argv[2])
         self.komentarz = sys.argv[3]
-        # print("kwota", self.kwota)
         return True
 
     def wykonaj(self, konto, magazyn):
@@ -55,12 +53,11 @@ class Saldo:
         konto += self.kwota
         return True, konto
 
-    def zapisz(self,plik):
+    def zapisz(self, plik):
         plik.write("saldo\n")
         plik.write(f"{self.kwota}\n")
         plik.write(f"{self.komentarz}\n")
-        return (self.kwota , self.komentarz)
-
+        return self.kwota, self.komentarz
 
 
 class Zakup:
@@ -107,7 +104,7 @@ class Zakup:
         plik.write(f"{self.nazwa}\n")
         plik.write(f"{self.cena}\n")
         plik.write(f"{self.ilosc}\n")
-        return (self.nazwa , self.cena , self.ilosc)
+        return self.nazwa, self.cena, self.ilosc
 
 
 class Sprzedaz:
@@ -154,7 +151,4 @@ class Sprzedaz:
         plik.write(f"{self.nazwa}\n")
         plik.write(f"{self.cena}\n")
         plik.write(f"{self.ilosc}\n")
-        return (self.nazwa , self.cena , self.ilosc)
-
-
-
+        return self.nazwa, self.cena, self.ilosc
