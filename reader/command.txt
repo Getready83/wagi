@@ -1,0 +1,1 @@
+reader.py prestashop_cat.en.csv prestashop_cat.en.csv1 0,0,dddddd 0,2,mmmm 1,1,ooooo
