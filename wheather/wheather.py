@@ -15,7 +15,7 @@ else:
 today = datetime.date.today()
 today = datetime.datetime.fromordinal(today.toordinal())
 
-if path.exists("out2.txt") and getmtime("out2.txt") >= today.timestamp():
+if path.exists("out1.txt") and getmtime("out1.txt") >= today.timestamp():
     print("odczyt z pliku")
     with open("out1.txt", "r", encoding="utf-8") as file:
         data = json.loads(file.read())
@@ -39,12 +39,13 @@ else:
 
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    with open("out2.txt", "w", encoding="utf-8") as file:
+    with open("out1.txt", "w", encoding="utf-8") as file:
         file.write(response.text)
     data = response.json()
-description = data["v3-wx-forecast-daily-15day"]["narrative"][0]
-opad = "rain" or "Rain" or "snow" or "Snow"
-if opad in description:
-    print("będzie padać")
-else:
-    print("nie będzie padać")
+description = data["v3-wx-forecast-daily-15day"]["narrative"]
+for days in description:
+    opad = "rain" or "Rain" or "snow" or "Snow"
+    if opad in days:
+        print("będzie padać")
+    else:
+        print("nie będzie padać")
