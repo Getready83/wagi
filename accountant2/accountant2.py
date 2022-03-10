@@ -109,6 +109,7 @@ class AccountBalance:
         return self.amount, self.comment
 
 
+@manager.assign("saldo")
 class Buy:
     flag_action = "zakup"
     error = "error - incorrect parameters for buy"
