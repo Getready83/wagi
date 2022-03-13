@@ -23,6 +23,10 @@ class Manager:
             action.access_argv("argv")
             if action.execute():
                 self.log.append(action)
+            with open('database.txt', "w") as file:
+                for action in self.log:
+                    action.write(file)
+                return
 
     def read_parameters(self, numbers_line, source, file=None):
         self.list = []
@@ -38,7 +42,6 @@ class Manager:
         if source == "argv":
             if len(sys.argv) >= numbers_line + 1:
                 self.list.append(sys.argv[1:])
-                print(self.list)
                 return True, sys.argv[1:numbers_line + 1]
             else:
                 return False, sys.argv[1:]
@@ -59,8 +62,7 @@ class Manager:
                     if not status:
                         break
                     self.log.append(action)
-            with open('konto.txt', "w") as file:
-                print(self.log)
+            with open('database.txt', "w") as file:
                 for action in self.log:
                     action.write(file)
             return self.account, self.list
@@ -89,7 +91,7 @@ class AccountBalance:
     def access_argv(self, source, file=None):
         status, self.list = manager.read_parameters(2, source, file)
         if not status:
-            print("error - incorrect parameters for account")
+            print("error - incorrect parameters for saldo")
             return False
         self.amount = int(sys.argv[2])
         self.comment = sys.argv[3]
@@ -139,7 +141,6 @@ class Buy:
         self.name = (sys.argv[2])
         self.price = int(sys.argv[3])
         self.quantity = int(sys.argv[4])
-        print(self.name, self.price, self.quantity)
         return True
 
     def execute(self):
@@ -160,7 +161,7 @@ class Buy:
         file.write(f"{self.name}\n")
         file.write(f"{self.price}\n")
         file.write(f"{self.quantity}\n")
-        return self.name, self.price, self.quantity
+        #
 
 
 @manager.assign("sprzedaz")
@@ -198,9 +199,13 @@ class Sell(Buy):
 
 
 @manager.assign("konto")
-class Account:
-    def __init__(self, manager):
-        self.manager = manager
+class Account(AccountBalance):
+
+    def access_file(self, source, file=None):
+        return True
+
+    def access_argv(self, source, file=None):
+        return True
 
     def execute(self):
         print(self.manager.account)
@@ -211,32 +216,43 @@ class Warehouse:
     def __init__(self, manager):
         self.manager = manager
 
+    def access_file(self, source, file=None):
+        return True
+
+    def access_argv(self, source, file=None):
+        return True
+
     def execute(self):
-        with open("magazyn.txt", "w") as file:
-            pass
+        with open("warehouse.txt", "w")as file:
+            for self.name in sys.argv[2:]:
+                file.write(
+                    f"{self.name}: {self.manager.warehouse[self.name]}\n"
+                ) if self.name in self.manager.warehouse else file.write(
+                    f"{self.name}: {0}\n"
+                )
 
 
 @manager.assign("przeglad")
-class Review:
+class Overview:
     def __init__(self, manager):
         self.manager = manager
 
+    def access_file(self, source, file=None):
+        return True
+
+    def access_argv(self, source, file=None):
+        return True
+
     def execute(self):
-        with open("przeglad.txt", "w") as file:
-            for action in self.log[int(sys.argv[2]): int(sys.argv[3]) + 1]:
-                print(action.write(file))
-                return action.write(file)
+        with open("overview.txt", "w") as file:
+            for action in self.manager.log[int(sys.argv[2]): int(sys.argv[3]) + 1]:
+                action.write(file)
+
+    def write(self):
+        with open("overview", "w") as file:
+            for action in self.manager.log[int(sys.argv[2]): int(sys.argv[3]) + 1]:
+                for event in action.write(file):
+                    event.write(file)
 
 
 action_type = {"saldo": AccountBalance, "zakup": Buy, "sprzedaz": Sell}
-
-
-
-
-
-
-
-
-           
-
-
