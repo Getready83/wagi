@@ -10,12 +10,16 @@ raspberry
 5
 sprzedaz
 raspberry
-25000
+25001
 5
 zakup
 jetson
 40000
 5
+sprzedaz
+jetson
+50000
+4
 sprzedaz
 jetson
 50000
