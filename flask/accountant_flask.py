@@ -8,6 +8,7 @@ def home():
     return render_template("index.html" ,magazyn=magazyn)
 
 
+
 #@accountant.route("/zakup.html", methods=["GET","POST"])
 #def form_buy():
 
