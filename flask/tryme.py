@@ -8,17 +8,14 @@ tryme = Flask(__name__)
 def hello():
     manager, action_type = create_manager()
     account = manager.main_loop()
-    warehouse = manager.warehouse
+    warehouse = manager.execute("magazyn")
     action = request.form.get("action")
     if action in action_type:
         manager.execute(action)
-    name = request.form.get("name")
-    price = request.form.get("price")
-    quantity = request.form.get("quantity")
     return render_template(
-        "accountant.html", name=name, price=price, quantity=quantity,
-        manager=manager, account=account, warehouse=warehouse
-    )
+            "accountant.html",
+            manager=manager, account=account, warehouse=warehouse
+        )
 
 
 @tryme.route("/history/", methods=["GET", "POST"])
@@ -35,27 +32,10 @@ def hello2():
         log=manager.log[from_line:to_line+1]
     )
 
-@tryme.route("/test/", methods=["GET", "POST"])
-def hello1():
-    name = request.args.get("name")
-    price = request.args.get("price")
-    quantity = request.args.get("quantity")
-    return render_template(
-        "index1.html", name=name, price=price, quantity=quantity
-    )
 
-
-@tryme.route("/form/", methods=["POST"])
-def hello_formularz():
-    name = request.args.get("name", "")
-    price = request.args.get("price", "")
-    quantity = request.args.get("quantity", "")
-    return redirect("/")
-
-@tryme.route("/thanks/")
+@tryme.route("/thanks/", methods=["Get", "POST"])
 def thankyou():
-    print("thank you")
-    return redirect("/")
+    return render_template("thanks.html")
 
 
 tryme.run(debug=True)

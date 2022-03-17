@@ -27,7 +27,7 @@ class Manager:
             with open('konto1.txt', "w") as file:
                 for action in self.log:
                     action.write(file)
-                return
+            return self.warehouse
 
     def read_parameters(self, numbers_line, source, file=None):
         self.list = []
@@ -66,12 +66,11 @@ class Manager:
             with open('konto1.txt', "w") as file:
                 for action in self.log:
                     action.write(file)
-            return self.account
+                return self.account
 
 
 def create_manager():
     manager = Manager()
-
 
     @manager.assign("saldo")
     class AccountBalance:
@@ -167,7 +166,7 @@ def create_manager():
             self.quantity = int(request.form.get("quantity"))
             if not self.quantity:
                 print("No parameters for Buy")
-            return
+            return self.name, self.price, self.quantity
 
         def execute(self):
             if self.manager.account - (self.price * self.quantity) < 0:
@@ -218,7 +217,7 @@ def create_manager():
             self.quantity = int(request.form.get("quantity"))
             if not self.quantity:
                 print("No parameters for Sell")
-            return
+            return self.name, self.price, self.quantity
 
         def execute(self):
             if self.name not in self.manager.warehouse:
@@ -256,7 +255,7 @@ def create_manager():
             return self.manager.account
 
         def write_html(self):
-            return "saldo", self.amount, self.comment
+            return
 
         def write(self, file):
             file.write("saldo\n")
@@ -277,6 +276,9 @@ def create_manager():
         def access_argv(self, source, file=None):
             return True
 
+        def access_request(self, request):
+            return
+
         def execute(self):
             with open("warehouse.txt", "w")as file:
                 for self.name in sys.argv[2:]:
@@ -285,10 +287,19 @@ def create_manager():
                     ) if self.name in self.manager.warehouse else file.write(
                         f"{self.name}: {0}\n"
                     )
-                return self.manager.warehouse
+            return self.manager.warehouse
 
         def write_html(self):
             return self.name, self.price, self.quantity
+
+        def write(self, file):
+            for self.name in sys.argv[2:]:
+                file.write(
+                    f"{self.name}: {self.manager.warehouse[self.name]}\n"
+                ) if self.name in self.manager.warehouse else file.write(
+                    f"{self.name}: {0}\n"
+                )
+            return
 
     @manager.assign("przeglad")
     class Overview:
