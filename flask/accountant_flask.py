@@ -21,13 +21,14 @@ class Manager:
             print(f"Action not defined: {name}")
         else:
             action = self.actions[name](self)
-            action.access_request(request)
+            status = action.access_request(request)
             if action.execute():
                 self.log.append(action)
-            with open('konto1.txt', "w") as file:
-                for action in self.log:
-                    action.write(file)
-            return self.warehouse
+                with open('konto1.txt', "w") as file:
+                    for action in self.log:
+                        action.write(file)
+                return True, self.warehouse
+            return False, self.warehouse
 
     def read_parameters(self, numbers_line, source, file=None):
         self.list = []
@@ -110,9 +111,10 @@ def create_manager():
         def execute(self):
             if int(self.amount) + int(self.manager.account) < 0:
                 print("error")
-                return False, self.manager.account
-            self.manager.account += int(self.amount)
-            return True
+                return False
+            else:
+                self.manager.account += int(self.amount)
+                return True
 
         def write_html(self):
             return "saldo", self.amount, self.comment
@@ -158,15 +160,20 @@ def create_manager():
 
         def access_request(self, request):
             self.name = request.form.get("name")
-            if not self.name:
-                print("No parameters for Buy")
-            self.price = int(request.form.get("price"))
-            if not self.price:
-                print("No parameters for Buy")
-            self.quantity = int(request.form.get("quantity"))
-            if not self.quantity:
-                print("No parameters for Buy")
-            return self.name, self.price, self.quantity
+            try:
+                self.price = int(request.form.get("price", 0))
+            except ValueError:
+                return 0
+            try:
+                self.quantity = int(request.form.get("quantity", 0))
+            except ValueError:
+                return 0
+            if self.price == 0:
+                return False
+            if self.quantity == 0:
+                return False
+            else:
+                return True, self.name, self.price, self.quantity
 
         def execute(self):
             if self.manager.account - (self.price * self.quantity) < 0:
@@ -190,8 +197,6 @@ def create_manager():
             file.write(f"{self.price}\n")
             file.write(f"{self.quantity}\n")
 
-
-
     @manager.assign("sprzedaz")
     class Sell(Buy):
         def __init__(self, manager):
@@ -208,30 +213,35 @@ def create_manager():
             return True
 
         def access_request(self, request):
-            self.name = request.form.get("name")
+            self.name = request.form.get("name1")
             if not self.name:
                 print("No parameters for Sell")
-            self.price = int(request.form.get("price"))
-            if not self.price:
-                print("No parameters for Sell")
-            self.quantity = int(request.form.get("quantity"))
-            if not self.quantity:
-                print("No parameters for Sell")
-            return self.name, self.price, self.quantity
+            try:
+                self.price = int(request.form.get("price", 0))
+                if not self.price:
+                    print("No parameters for Sell")
+            except ValueError:
+                return 0
+            try:
+                self.quantity = int(request.form.get("quantity", 0))
+                if not self.quantity:
+                    print("No parameters for Sell")
+            except ValueError:
+                return 0
+            return True, self.name, self.price, self.quantity
 
         def execute(self):
             if self.name not in self.manager.warehouse:
                 print("Product not in stock.")
-                return False, self.manager.account, self.manager.warehouse
+                return False
             else:
                 if self.manager.warehouse[self.name] - self.quantity < 0:
                     print("error - there is not enough quantity in stock")
-                    return False, self.manager.account, self.manager.warehouse,\
-                           self.manager.warehouse[self.name]
+                    return False
                 else:
                     self.manager.warehouse[self.name] -= self.quantity
                     self.manager.account += self.price * self.quantity
-                return True, self.manager.account, self.manager.warehouse
+                    return True, self.manager.account, self.manager.warehouse
 
         def write_html(self):
             return "sprzedaz", self.name, self.price, self.quantity

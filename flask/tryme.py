@@ -1,6 +1,6 @@
-import sys
 from flask import Flask, render_template, request, redirect
 from accountant_flask import create_manager
+
 tryme = Flask(__name__)
 
 
@@ -8,14 +8,20 @@ tryme = Flask(__name__)
 def hello():
     manager, action_type = create_manager()
     account = manager.main_loop()
-    warehouse = manager.execute("magazyn")
+    status, warehouse = manager.execute("magazyn")
     action = request.form.get("action")
+    error = {"zakup": "", "sprzedaz": "", "saldo": ""}
     if action in action_type:
-        manager.execute(action)
+        status, warehouse = manager.execute(action)
+        if status:
+            return redirect("/")
+        else:
+            error[action] = "incorrect data"
     return render_template(
             "accountant.html",
-            manager=manager, account=account, warehouse=warehouse
-        )
+            manager=manager, account=account, warehouse=warehouse,
+         form=request.form, error=error, status=status
+                        )
 
 
 @tryme.route("/history/", methods=["GET", "POST"])
