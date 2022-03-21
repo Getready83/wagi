@@ -159,20 +159,22 @@ def create_manager():
             return True
 
         def access_request(self, request):
-            self.name = request.form.get("name")
-            try:
-                self.price = int(request.form.get("price", 0))
-            except ValueError:
-                return 0
-            try:
-                self.quantity = int(request.form.get("quantity", 0))
-            except ValueError:
-                return 0
-            if self.price == 0:
-                return False
-            if self.quantity == 0:
-                return False
+            if not request.form.get("name"):
+                return False, request.form.get("incorrect buy")
             else:
+                self.name = request.form.get("name")
+                try:
+                    self.price = int(request.form.get("price", 0))
+                except ValueError:
+                    return False
+                try:
+                    self.quantity = int(request.form.get("quantity", 0))
+                except ValueError:
+                    return 0
+                if self.price == 0:
+                    return False
+                if self.quantity == 0:
+                    return False
                 return True, self.name, self.price, self.quantity
 
         def execute(self):
