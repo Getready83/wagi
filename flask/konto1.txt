@@ -20,3 +20,11 @@ sprzedaz
 jetson
 50000
 4
+zakup
+jetson
+1
+1
+sprzedaz
+jetson
+1
+1
