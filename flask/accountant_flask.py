@@ -350,6 +350,3 @@ def create_manager():
     action_type = {"saldo": AccountBalance, "zakup": Buy, "sprzedaz": Sell}
 
     return manager, action_type
-
-
-
