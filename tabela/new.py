@@ -38,10 +38,7 @@ class SaldoDb(db.Model):
 class AccountDb(db.Model):
     finances = db.Column(db.Float, primary_key=True)
 
-
-ada = db.session.query(AccountDb).first()
-print(ada)
-
+class Transaction(db.Model):
 
 class Manager:
     def __init__(self):
@@ -50,6 +47,23 @@ class Manager:
         self.log = []
         self.account = 0
         self.warehouse = {}
+        self.load()
+
+    def load(self):
+        for product in db.session.query(WarehouseDb):
+            self.warehouse[product.product_name] = product.product_quantity
+
+        for product in db.session.query(BuyDb):
+            self.transaction.append(product.transaction)
+
+        for product in db.session.query(SellDb):
+            self.transaction.append(product.transaction)
+
+        for t in db.session.query(SaldoDb):
+            self.transaction.append(t.transaction)
+
+        for money in db.session.query(AccountDb):
+            self.account = money.finances
 
     def assign(self, name):
         def decorate(cb):
@@ -59,22 +73,6 @@ class Manager:
 
     def execute(self, name):
 
-        for product in db.session.query(WarehouseDb):
-            self.warehouse[product.name] = product.quantity
-
-        for product in db.session.query(BuyDb):
-            self.transaction.append(product.to_buy)
-
-        for product in db.session.query(SellDb):
-            self.transaction.append(product.to_sell)
-
-        for t in db.session.query(SaldoDb):
-            self.transaction.append(t.transaction)
-
-        for money in db.session.query(AccountDb):
-            self.account = money.finances
-
-        print(money, "money.finances")
 
         if name not in self.actions:
             print(f"Action not defined: {name}")
@@ -158,7 +156,7 @@ def create_manager():
             self.name = ""
             self.price = 0
             self.quantity = 0
-            self.list = []
+
 
         def access_request(self, request):
             self.name = request.form.get("name")
