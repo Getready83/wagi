@@ -97,7 +97,7 @@ class Manager:
             self.log.append(action)
             for action in self.log:
                 action.write_db()
-        return True, self.warehouse
+            return True, self.warehouse
 
     def main_loop(self, request):
         while True:
@@ -129,7 +129,8 @@ def create_manager():
         def access_request(self, request):
             self.amount = int(request.form.get("amount"))
             self.comment = (request.form.get("comment"))
-            return True
+            return
+
 
         def execute(self):
             if int(self.amount) + int(self.manager.account) < 0:
@@ -162,12 +163,25 @@ def create_manager():
             self.name = ""
             self.price = 0
             self.quantity = 0
-            self.list = []
 
         def access_request(self, request):
-            self.name = request.form.get("name")
-            self.price = int(request.form.get("price", 0))
-            self.quantity = int(request.form.get("quantity", 0))
+            if not request.form.get("name"):
+                return False, request.form.get("incorrect buy")
+            else:
+                self.name = request.form.get("name")
+                try:
+                    self.price = int(request.form.get("price", 0))
+                except ValueError:
+                    return False
+                try:
+                    self.quantity = int(request.form.get("quantity", 0))
+                except ValueError:
+                    return 0
+                if self.price == 0:
+                    return False
+                if self.quantity == 0:
+                    return False
+                return True, self.name, self.price, self.quantity
 
         def execute(self):
             if self.manager.account - (self.price * self.quantity) < 0:
