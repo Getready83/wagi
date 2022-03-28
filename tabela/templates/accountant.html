@@ -43,13 +43,16 @@
           <form method="POST" action="/">
             <input type="hidden" name="action" value="zakup"/>
               <div class="form-group">
-                  <label class="form-label" for="input-name">Product name</label>
-                  <input class="form-input" type="text" id="input-name" name="name" placeholder="Name">
+                  <div class="error">
+                      {{error.zakup}}
+                  <label class="form-label" for="input-name" >Product name</label>
+                  <input class="form-input" type="text" id="input-name" name="name" placeholder="Name" value="{{form.name}}" required>
                   <label class="form-label" for="input-price">Price</label>
-                  <input class="form-input" type="text" id="input-price" name="price" placeholder="Price">
+                  <input class="form-input" type="number" id="input-price" name="price" placeholder="Price" value="{{form.name}}" required>
                   <label class="form-label" for="input-quantity">Quantity</label>
-                  <input class="form-input" type="text" id="input-quantity" name="quantity" placeholder="Quantity">
+                  <input class="form-input" type="number" id="input-quantity" name="quantity" placeholder="Quantity" value="{{form.name}}" required>
                   <button class="btn btn-primary">buy</button>
+                  </div>
               </div>
           </form>
               </div>
@@ -59,13 +62,17 @@
           <form method="POST" action="/">
             <input type="hidden" name="action" value="sprzedaz"/>
               <div class="form-group">
-                  <label class="form-label" for="input-name1">Product name</label>
-                  <input class="form-input" type="text" id="input-name1" name="name" placeholder="Name">
-                  <label class="form-label" for="input-price1">Price</label>
-                  <input class="form-input" type="text" id="input-price1" name="price" placeholder="Price">
-                  <label class="form-label" for="input-quantity1">Quantity</label>
-                  <input class="form-input" type="text" id="input-quantity1" name="quantity" placeholder="Quantity">
+                <div class="error">
+                      {{error.sprzedaz}}
+
+                  <label class="form-label" for="input-name-1">Product name</label>
+                  <input class="form-input" type="text" id="input-name-1" name="name1" placeholder="Name" value="{{form.name1}}" required>
+                  <label class="form-label" for="input-price-1">Price</label>
+                  <input class="form-input" type="number" id="input-price-1" name="price1" placeholder="Price" value="{{form.name}}" required>
+                  <label class="form-label" for="input-quantity-1">Quantity</label>
+                  <input class="form-input" type="number" id="input-quantity-1" name="quantity1" placeholder="Quantity" value="{{form.name}}"required>
                   <button class="btn btn-primary">sell</button>
+                </div>
               </div>
           </form>
   </div>
@@ -75,11 +82,14 @@
           <form method="POST" action="/">
             <input type="hidden" name="action" value="saldo"/>
               <div class="form-group">
+                  <div class="error">
+                            {{error.saldo}}
                   <label class="form-label" for="input-amount">Amount</label>
-                  <input class="form-input" type="text" id="input-amount" name="amount" placeholder="Amount">
+                  <input class="form-input" type="number" id="input-amount" name="amount" placeholder="Amount" value="{{form.name}}" required>
                   <label class="form-label" for="input-comment">Price</label>
-                  <input class="form-input" type="text" id="input-comment" name="comment" placeholder="comment">
+                  <input class="form-input" type="text" id="input-comment" name="comment" placeholder="comment" required>
                   <button class="btn btn-primary">confirm</button>
+               </div>
               </div>
           </form>
        </div>

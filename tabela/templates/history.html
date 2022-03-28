@@ -31,19 +31,22 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>action</th>
-                        <th>value/product name</th>
-                        <th>comment/price</th>
-                        <th>quantity</th>
+                        <th><h3>Id</h3></th>
+                        <th><h3>Action</h3></th>
+                        <th><h3>Value/Product name</h3></th>
+                        <th><h3>Comment/Price</h3></th>
+                        <th><h3>Quantity</h3></th>
                     </tr>
                     </thead>
                 <tbody>
-                    {% for action in log %}
-                        <tr class="active">
-                            {% for cel in action.write_html()%}
-                                <td>{{cel}}</td>
-                            {% endfor %}
-                        </tr>
+                    {% for transaction in log %}
+                      <tr>
+                        <td><h6> {{transaction.id}} </h6></td>
+                        <td><h6> {{transaction.transaction}} </h6></td>
+                        <td><h6> {{ transaction.comment_or_name }} </h6></td>
+                        <td><h6> {{ transaction.value_or_price }} </h6></td>
+                        <td><h6> {{ transaction.quantity }} </h6></td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>

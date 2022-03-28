@@ -5,6 +5,9 @@ from flask import Flask, render_template, request, redirect
 import sys
 
 
+
+
+
 class Manager:
     def __init__(self):
         self.actions = {}
@@ -30,7 +33,7 @@ class Manager:
             with open('konto1.txt', "w") as file:
                 for action in self.log:
                     action.write(file)
-            return self.warehouse
+            return self.warehouse,
 
     def read_parameters(self, numbers_line, source, file=None):
         self.list = []
@@ -97,10 +100,18 @@ def create_manager():
 
         def execute(self):
             if int(self.amount) + int(self.manager.account) < 0:
-                print("error")
                 return False, self.manager.account
-            self.manager.account += int(self.amount)
+            else:
+                self.manager.account += int(self.amount)
+                finances = db.session.query(Warehouse).filter(Warehouse.finances == self.manager.account).first()
+                loghistory = History(transaction="saldo", value=self.amount, comment=self.comment)
+
+
+
             return True
+
+        def execute_db(self):
+            pass
 
         def write_html(self):
             return "saldo", self.amount, self.comment
@@ -161,6 +172,9 @@ def create_manager():
                     self.manager.warehouse[self.name] += self.quantity
                     self.manager.account -= self.price * self.quantity
                 return True, self.manager.account, self.manager.warehouse
+
+        def execute_db(self):
+            pass
 
         def write_html(self):
             return "zakup", self.name, self.price, self.quantity
