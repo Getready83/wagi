@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_alembic import Alembic
 import sys
 
 new = Flask(__name__)
 new.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 db = SQLAlchemy(new)
+
+alembic = Alembic()
+alembic.init_app(new)
 
 
 class WarehouseDb(db.Model):
@@ -30,15 +34,23 @@ class SellDb(db.Model):
 
 class SaldoDb(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    transaction = db.Column(db.String(10), unique=False, nullable=False)
-    value = db.Column(db.Float, unique=False, nullable=False)
-    comment = db.Column(db.String(30), unique=False, nullable=False)
+    transaction = db.Column(db.String(10), nullable=False)
+    value = db.Column(db.Float,  nullable=False)
+    comment = db.Column(db.String(30), nullable=False)
 
 
 class AccountDb(db.Model):
     finances = db.Column(db.Float, primary_key=True)
 
+
 class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    transaction = db.Column(db.String(10))
+    comment_or_name = db.Column(db.String)
+    value_or_price = db.Column(db.Float)
+    quantity = db.Column(db.Integer)
+
+db.create_all()
 
 class Manager:
     def __init__(self):
@@ -47,23 +59,28 @@ class Manager:
         self.log = []
         self.account = 0
         self.warehouse = {}
+        self.overview = []
         self.load()
 
     def load(self):
         for product in db.session.query(WarehouseDb):
             self.warehouse[product.product_name] = product.product_quantity
 
-        for product in db.session.query(BuyDb):
-            self.transaction.append(product.transaction)
+        for buy_db in db.session.query(BuyDb):
+            self.transaction.append(buy_db.transaction)
 
-        for product in db.session.query(SellDb):
-            self.transaction.append(product.transaction)
+        for sell_db in db.session.query(SellDb):
+            self.transaction.append(sell_db.transaction)
 
-        for t in db.session.query(SaldoDb):
-            self.transaction.append(t.transaction)
+        for saldo_db in db.session.query(SaldoDb):
+            self.transaction.append(saldo_db.transaction)
 
         for money in db.session.query(AccountDb):
             self.account = money.finances
+
+        for event in db.session.query(Transaction).all():
+            self.transaction.append(event)
+
 
     def assign(self, name):
         def decorate(cb):
@@ -72,40 +89,45 @@ class Manager:
         return decorate
 
     def execute(self, name):
-
-
+        finances = db.session.query(AccountDb).first()
+        finances.finances = self.account
+        db.session.add(finances)
+        db.session.commit()
         if name not in self.actions:
             print(f"Action not defined: {name}")
         else:
             action = self.actions[name](self)
-            print(action, "manager execute")
             action.access_request(request)
             action.execute()
+            print(action.execute, "line 97")
             self.log.append(action)
-            for action in self.log:
-                action.write_db()
-            return True, self.warehouse, self.account, self.transaction, self.log
-        return False, self.warehouse, self.account, self.transaction, self.log
+            print(self.log, " 98")
+            print(action.write_html(), "line 99")
+            action.write_db()
+        return True, self.warehouse
 
     def main_loop(self, request):
         while True:
             line = request.form.get("action")
-            print(line, "linia po request")
+            print(line, "105")
             if line in self.actions:
-                print(self.actions, "main_loop")
                 action = self.actions[line](self)
-                print(action, "main_ loop linia 97")
                 status = action.access_request(request)
-                print("status0")
-                if not status:
-                    break
-                status = action.execute()
-                if not status:
-                    break
+                print(status,"1")
+                action.execute()
+                print(action.execute,"111 linia")
+                print(status,"2")
                 self.log.append(action)
-            for action in self.log:
-                action.write_db()
+            print(self.log, "linia 117")
             return self.account
+
+    def read(self, from_line, to_line):
+        for transaction in db.session.query(Transaction).all():
+            self.transaction.append(transaction)
+            print(transaction.id, transaction.transaction,
+                  transaction.comment_or_name, transaction.value_or_price,
+                  transaction.quantity)
+
 
 
 def create_manager():
@@ -117,12 +139,14 @@ def create_manager():
             self.manager = manager
             self.amount = 0
             self.comment = ""
-            self.list = []
 
         def access_request(self, request):
             self.amount = int(request.form.get("amount"))
             self.comment = (request.form.get("comment"))
-            return True
+            self.manager.overview.append(self.amount)
+            self.manager.overview.append(self.comment)
+            return self.manager.overview
+
 
         def execute(self):
             if int(self.amount) + int(self.manager.account) < 0:
@@ -135,15 +159,19 @@ def create_manager():
         def write_html(self):
             return "saldo", self.amount, self.comment
 
+        def write(self, file):
+            file.write("saldo\n")
+            file.write(f"{self.amount}\n")
+            file.write(f"{self.comment}\n")
+
         def write_db(self):
-            id_saldo = db.session.query(SaldoDb).filter(SaldoDb.id).all()
-            id_saldo = 1
-            event_in_saldo = SaldoDb(id=id_saldo, transaction="saldo",
+            event_in_transaction = Transaction(
+                transaction="saldo", comment_or_name=self.comment,
+                value_or_price=self.amount, quantity="----")
+            event_in_saldo = SaldoDb(transaction="saldo",
                                      value=self.amount, comment=self.comment)
-            finances = db.session.query(AccountDb).first()
-            finances.finances = self.manager.account
             db.session.add(event_in_saldo)
-            db.session.add(finances)
+            db.session.add(event_in_transaction)
             db.session.commit()
 
     @manager.assign("zakup")
@@ -156,34 +184,22 @@ def create_manager():
             self.name = ""
             self.price = 0
             self.quantity = 0
-
+            print(self.quantity, "171")
 
         def access_request(self, request):
             self.name = request.form.get("name")
             self.price = int(request.form.get("price", 0))
+            print(self.price, "176 acces request zakup pri")
             self.quantity = int(request.form.get("quantity", 0))
-            if not request.form.get("name"):
-                return False, request.form.get("incorrect buy")
-            else:
-                self.name = request.form.get("name")
-                try:
-                    self.price = int(request.form.get("price", 0))
-                except ValueError:
-                    return False
-                try:
-                    self.quantity = int(request.form.get("quantity", 0))
-                except ValueError:
-                    return 0
-                if self.price == 0:
-                    return False
-                if self.quantity == 0:
-                    return False
-                return True, self.name, self.price, self.quantity
+            print(self.quantity, "178 acces request zakup qty")
+            self.manager.overview.append(self.name)
+            self.manager.overview.append(self.price)
+            self.manager.overview.append(self.quantity)
+            return self.manager.overview
 
         def execute(self):
             if self.manager.account - (self.price * self.quantity) < 0:
                 print("You have no funds in your account")
-                return False
             else:
                 if self.name not in self.manager.warehouse:
                     self.manager.warehouse[self.name] = self.quantity
@@ -191,17 +207,16 @@ def create_manager():
                 else:
                     self.manager.warehouse[self.name] += self.quantity
                     self.manager.account -= self.price * self.quantity
-                return True, self.manager.account, self.manager.warehouse
-
+            print(manager.overview, "194")
         def write_html(self):
             return "zakup", self.name, self.price, self.quantity
 
+
         def write_db(self):
-            finances = db.session.query(AccountDb).first()
-            finances.finances = self.manager.account
-            id_buy = db.session.query(BuyDb).filter(BuyDb.id).all()
-            id_buy = id_buy[1] + 1
-            event_in_buy = BuyDb(id=id_buy, transaction="zakup",
+            event_in_transaction = Transaction(
+                transaction="zakup", comment_or_name=self.name, value_or_price=
+            self.price, quantity=self.quantity)
+            event_in_buy = BuyDb(transaction="zakup",
                                  product_name=self.name, price=self.price,
                                  qty_product=self.quantity)
             warehouse_db = db.session.query(WarehouseDb).filter(
@@ -213,34 +228,26 @@ def create_manager():
                 warehouse_db.product_quantity = self.manager.warehouse[self.name]
             db.session.add(warehouse_db)
             db.session.add(event_in_buy)
+            db.session.add(event_in_transaction)
             db.session.commit()
 
 
     @manager.assign("sprzedaz")
-    class Sell(Buy):
+    class Sell():
         def __init__(self, manager):
-            super().__init__(manager)
+            self.manager = manager
+            self.name = ""
+            self.price = 0
+            self.quantity = 0
 
         def access_request(self, request):
             self.name = request.form.get("name1")
             self.price = int(request.form.get("price", 0))
             self.quantity = int(request.form.get("quantity", 0))
-            self.name = request.form.get("name1")
-            if not self.name:
-                print("No parameters for Sell")
-            try:
-                self.price = int(request.form.get("price", 0))
-                if not self.price:
-                    print("No parameters for Sell")
-            except ValueError:
-                return 0
-            try:
-                self.quantity = int(request.form.get("quantity", 0))
-                if not self.quantity:
-                    print("No parameters for Sell")
-            except ValueError:
-                return 0
-            return True, self.name, self.price, self.quantity
+            self.manager.overview.append(self.name)
+            self.manager.overview.append(self.price)
+            self.manager.overview.append(self.quantity)
+            return self.manager.overview
 
         def execute(self):
             if self.name not in self.manager.warehouse:
@@ -253,21 +260,22 @@ def create_manager():
                 else:
                     self.manager.warehouse[self.name] -= self.quantity
                     self.manager.account += self.price * self.quantity
-                    return True, self.manager.account, self.manager.warehouse
+                return True
 
         def write_html(self):
             return "sprzedaz", self.name, self.price, self.quantity
 
         def write(self, file):
-            self.flag_action = "sprzedaz"
-            super().write(file)
+            file.write(f"{self.flag_action}\n")
+            file.write(f"{self.name}\n")
+            file.write(f"{self.price}\n")
+            file.write(f"{self.quantity}\n")
 
         def write_db(self):
-            finances = db.session.query(AccountDb).first()
-            finances.finances = self.manager.account
-            id_sell = db.session.query(BuyDb).filter(BuyDb.id).all()
-            id_sell = 1
-            event_in_buy = BuyDb(id=id_sell, transaction="sprzedaz",
+            event_in_transaction = Transaction(
+                transaction="sprzedaz", comment_or_name=self.name, value_or_price=
+                self.price, quantity=self.quantity)
+            event_in_sell = SellDb(transaction="sprzedaz",
                                  product_name=self.name, price=self.price,
                                  qty_product=self.quantity)
             warehouse_db = db.session.query(WarehouseDb).filter(
@@ -278,108 +286,34 @@ def create_manager():
             else:
                 warehouse_db.product_quantity = self.manager.warehouse[self.name]
             db.session.add(warehouse_db)
-            db.session.add(event_in_buy)
+            db.session.add(event_in_sell)
+            db.session.add(event_in_transaction)
             db.session.commit()
-
-
-    @manager.assign("konto")
-    class Account(AccountBalance):
-
-        def access_file(self, source, file=None):
-            return True
-
-        def access_argv(self, source, file=None):
-            return True
-
-        def execute(self):
-            print(self.manager.account)
-            return self.manager.account
-
-        def write_html(self):
-            return
-
-        def write(self, file):
-            file.write("saldo\n")
-            file.write(f"{self.amount}\n")
-            file.write(f"{self.comment}\n")
-            return self.amount, self.comment
-
-        def write_db(self):
-            pass
-
-
-    @manager.assign("magazyn")
-    class Warehouse:
-        def __init__(self, manager):
-            self.manager = manager
-
-        def access_file(self, source, file=None):
-            return True
-
-        def access_argv(self, source, file=None):
-            return True
-
-        def access_request(self, request):
-            return
-
-        def execute(self):
-            with open("warehouse.txt", "w")as file:
-                for self.name in sys.argv[2:]:
-                    file.write(
-                        f"{self.name}: {self.manager.warehouse[self.name]}\n"
-                    ) if self.name in self.manager.warehouse else file.write(
-                        f"{self.name}: {0}\n"
-                    )
-            return self.manager.warehouse
-
-        def write_html(self):
-            return self.name, self.price, self.quantity
-
-        def write(self, file):
-            for self.name in sys.argv[2:]:
-                file.write(
-                    f"{self.name}: {self.manager.warehouse[self.name]}\n"
-                ) if self.name in self.manager.warehouse else file.write(
-                    f"{self.name}: {0}\n"
-                )
-            return
-
-        def write_db(self):
-            pass
 
     @manager.assign("przeglad")
     class Overview:
         def __init__(self, manager):
             self.manager = manager
 
-        def access_file(self, source, file=None):
-            return True
-
-        def access_argv(self, source, file=None):
-            from_line = sys.argv[2]
-            to_line = sys.argv[3]
-            return True
-
         def access_request(self, request):
-            return
+            from_line = int(request.form.get("line_from", 0))
+
+            to_line = int(request.form.get("line_to", len(
+                self.manager.log) - 1)) + 1
+            return from_line, to_line
 
         def execute(self):
             with open("overview.txt", "w") as file:
                 for action in self.manager.log[
-                              int(request.form.get("line_from",0)): int(
+                              int(request.form.get("line_from", 0)): int(
                                   request.form.get("line_to", len(
-                                      self.manager.log)-1)) + 1
+                                      self.manager.log) - 1)) + 1
                               ]:
                     action.write(file)
                 return
 
-        def write(self):
-            with open("overview", "w") as file:
-                for action in self.manager.log[
-                        int(self.from_line): int(self.to_line) + 1
-                        ]:
-                    for event in action.write(file):
-                        event.write(file)
+        def write_html(self):
+            return True
 
         def write_db(self):
             pass
@@ -392,24 +326,58 @@ def create_manager():
 def hello():
     manager, action_type = create_manager()
     account = manager.main_loop(request)
-    status, warehouse, manager.account, manager.transaction, manager.log = manager.execute("magazyn")
-    action = request.form.get("action")
-    error = {"zakup": "", "sprzedaz": "", "saldo": ""}
-    if action in action_type:
-        status, warehouse, manager.account, manager.transaction, manager.log= manager.execute(action)
-        if status:
-            return redirect("/")
-        else:
-            error[action] = "incorrect data"
+    status, warehouse = manager.execute(request)
+    if request.method == "POST":
+        action = request.form.get("action")
+        error = {"zakup": "", "sprzedaz": "", "saldo": ""}
+        print(request.method, "request method")
+        print(request.form, "request form")
+        print(action, "action")
+        if action in action_type:
+            status, warehouse = manager.execute(action)
+            if status:
+                return redirect("/")
+            else:
+                error[action] = "incorrect data"
+        return render_template(
+                "accountant.html",
+                manager=manager, account=account, warehouse=warehouse,
+             form=request.form, error=error, status=status
+                            )
     return render_template(
-            "accountant.html",
-            manager=manager, account=account, warehouse=warehouse,
-         form=request.form, error=error, status=status
-                        )
-
+                "accountant.html", manager=manager, account=account, warehouse=warehouse, form=request.form, error="")
 
 @new.route("/history/", methods=["GET", "POST"])
 def hello2():
+    manager, action_type = create_manager()
+    log = []
+    manager.main_loop(request)
+    from_line = int(request.form.get("line_from", 0))
+    to_line = int(request.form.get("line_to", len(manager.transaction)-1))
+    if request.method == "POST":
+        manager.read(from_line, to_line)
+        return redirect("/history/")
+
+    return render_template(
+        "history.html", manager=manager, from_line=from_line, to_line=to_line,
+        log=manager.transaction[from_line:to_line+1]
+    )
+
+
+    """
+    log = {}
+    manager, action_type = create_manager()
+    manager.main_loop(request)
+    print(manager.main_loop(request), "315")
+    from_line = int(request.form.get("line_from", 0))
+    to_line = int(request.form.get("line_to", len(manager.log)-1))
+    manager.execute(request)
+    print(manager.execute("przeglad"), 319)
+
+
+    for t in db.session.query(Transaction).all():
+        log[t.transaction] = t.comment_or_name, t.value_or_price, t.quantity
+    print(log)
     log = {}
     manager, action_type = create_manager()
     manager.main_loop(request)
@@ -421,11 +389,12 @@ def hello2():
         "history.html", manager=manager, from_line=from_line, to_line=to_line,
         log=manager.log[from_line:to_line+1]
     )
-
+"""
 
 @new.route("/thanks/", methods=["Get", "POST"])
 def thankyou():
     return render_template("thanks.html")
+
 
 
 new.run(debug=True)
