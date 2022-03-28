@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_alembic import Alembic
-import sys
+
 
 new = Flask(__name__)
 new.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
@@ -50,7 +50,6 @@ class Transaction(db.Model):
     value_or_price = db.Column(db.Float)
     quantity = db.Column(db.Integer)
 
-db.create_all()
 
 class Manager:
     def __init__(self):
@@ -79,7 +78,6 @@ class Manager:
 
         for event in db.session.query(Transaction).all():
             self.transaction.append(event)
-
 
     def assign(self, name):
         def decorate(cb):
@@ -132,10 +130,7 @@ def create_manager():
 
         def access_request(self, request):
             self.amount = int(request.form.get("amount"))
-            print(self.amount,"saldo amout")
             self.comment = (request.form.get("comment"))
-            print(self.comment, "saldo comm")
-            return
 
         def execute(self):
             if int(self.amount) + int(self.manager.account) < 0:
@@ -169,10 +164,9 @@ def create_manager():
         def access_request(self, request):
             self.name = request.form.get("name")
             self.price = int(request.form.get("price", 0))
-            print(self.price, "self.price zakup")
             self.quantity = int(request.form.get("quantity", 0))
-            print(self.quantity, "zakup")
-            return
+
+
 
         def execute(self):
             if self.manager.account - (self.price * self.quantity) < 0:
@@ -217,10 +211,8 @@ def create_manager():
         def access_request(self, request):
             self.name = request.form.get("name1")
             self.price = int(request.form.get("price1", 0))
-            print(self.price, "price sprzedaz")
             self.quantity = int(request.form.get("quantity1", 0))
-            print(self.quantity,"qty sprzedaz")
-            return
+
 
         def execute(self):
             if self.name not in self.manager.warehouse:
@@ -267,9 +259,6 @@ def hello():
     if request.method == "POST":
         action = request.form.get("action")
         error = {"zakup": "", "sprzedaz": "", "saldo": ""}
-        print(request.method, "request method")
-        print(request.form, "request form")
-        print(action, "action")
         if action in action_type and False:
             status = manager.execute(action)
             if status:
@@ -309,7 +298,6 @@ def hello2():
 @new.route("/thanks/", methods=["Get", "POST"])
 def thankyou():
     return render_template("thanks.html")
-
 
 
 new.run(debug=True)
