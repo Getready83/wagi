@@ -110,13 +110,13 @@ class Manager:
                 self.log.append(action)
             return self.account
 
-    def read(self, from_line, to_line):
+"""    def read(self, from_line, to_line):
         for transaction in db.session.query(Transaction).all():
             self.transaction.append(transaction)
             print(transaction.id, transaction.transaction,
                   transaction.comment_or_name, transaction.value_or_price,
                   transaction.quantity)
-
+"""
 
 def create_manager():
     manager = Manager()
@@ -246,6 +246,7 @@ def create_manager():
             db.session.add(event_in_sell)
             db.session.add(event_in_transaction)
             db.session.commit()
+
 
     action_type = {"saldo": AccountBalance, "zakup": Buy, "sprzedaz": Sell}
 
