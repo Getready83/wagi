@@ -87,14 +87,11 @@ class Uczen:
         grupa = pobierz_numer_grupy(self.klasa)
         grupa.uczniowie.append(self)
 
-
     def drukuj(self):
         for nauczyciel in grupy[self.klasa].nauczyciele:
             print(nauczyciel.przedmiot, "\n", nauczyciel.imie_nazwisko)
 
-
 while True:
-
 
     typ_uzytkownika = input()
     if typ_uzytkownika == "koniec":
@@ -109,7 +106,6 @@ while True:
 
     osoba.wczytanie()
     osoby[osoba.imie_nazwisko] = osoba
-
 
 phrase = (sys.argv[1])
 if phrase in grupy:
