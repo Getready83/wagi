@@ -31,6 +31,3 @@ if not over100:
     print(f"Długość ciągu to: {max_krok} kroki.")
 else:
     print("Miałes podać liczbę od 1 do 100 !!!")
-
-
-# Nie wiem dlaczego wypisuje to aż tyle razy  ???
