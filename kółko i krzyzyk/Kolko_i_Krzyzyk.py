@@ -31,6 +31,7 @@ print("Komputer zaczyna\nPowodzenia")
 # cpu zaczyna
 
 # okreslenie ruchów dla cpu
+# sprawdzenie czy user nie może w nastepnym ruchu wygrać
 
 # sprawdzenie czy jest wygrana
 
@@ -45,8 +46,6 @@ print("Komputer zaczyna\nPowodzenia")
 # jezeli cpu wygral to komentarz
 # jezeli user wygral to komentarz(zalozenie ze cpu nigdy nie przegrywa)
 # jezeli remis to komentarz
-
-
 
 """
 " {p1}{p2}{p3}\n"
