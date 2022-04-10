@@ -1,53 +1,99 @@
-""" zaczyna cpu
-# cpu = "X"
-# user = "O"
-# cpu nigdy nie przegra wybiera optymalne ruchy.
-# identyfikator pol
-    1 2 3
-    4 5 6
-    7 8 9
-Przebieg
-cpu wykonuje ruch jeśli wygrał wyswietla komunikat "Przegrana" jeśli ostatnie pole
-zostało wypełnione "Remis"
+import random
 
-start
-    - - -
-    - X -
-    - - -
+board = ["-", "-", "-",
+         "-", "-", "-",
+         "-", "-", "-"]
 
-    """
+currentPlayer = "x"
+winner = None
+gameRunning = True
 
-cpu = "X"
-user = "O"
-puste_pole = "-"
+def newBoard(board):
+      print(board[0], board[1], board[2])
+      print(board[3], board[4], board[5])
+      print(board[6], board[7], board[8])
 
-# drukuje pustą planszę
-print("Witam w grze kolko i krzyzyk")
-print("plansza do gry na początku wygląda:\n"
-      " -  -  - \n"
-      " -  -  - \n"
-      " -  -  - \n")
-print("Komputer zaczyna\nPowodzenia")
-# cpu zaczyna
 
-# okreslenie ruchów dla cpu
-# sprawdzenie czy user nie może w nastepnym ruchu wygrać
+def playerChoose(board):
+      move = int(input("Enter a number 1 - 9: "))
+      if move >= 1 and move <= 9 and board[move - 1] == "-":
+            board[move - 1] = currentPlayer
+      else:
+            print("thise spot is occupied")
 
-# sprawdzenie czy jest wygrana
 
-# drukuj nowa plansze
+def checkForWinHrizont(board):
+      global winner
+      if board[0] == board[1] == board[2] and board[1] != "-":
+            winner = board[0]
+            return True
+      elif board[3] == board[4] == board[5] and board[4] != "-":
+            winner = board[3]
+            return True
+      elif board[6] == board[7] == board[8] and board[8] != "-":
+            winner = board[6]
+            return True
 
-# kolej user
 
-# wybor pola
+def checkForWinRow(board):
+      global winner
+      if board[0] == board[3] == board[6] and board[0] != "-":
+            winner = board[0]
+            return True
+      elif board[1] == board[4] == board[7] and board[1] != "-":
+            winner = board[1]
+            return True
+      elif board[2] == board[5] == board[8] and board[2] != "-":
+            winner = board[2]
+            return True
 
-# sprawdzenie czy jest wygrana
 
-# jezeli cpu wygral to komentarz
-# jezeli user wygral to komentarz(zalozenie ze cpu nigdy nie przegrywa)
-# jezeli remis to komentarz
+def checkForWinDiagonal(board):
+      global winner
+      if board[0] == board[4] == board[8] and board[0] != "-":
+            winner = board[0]
+            return True
+      elif board[2] == board[4] == board[6] and board[2] != "-":
+            winner = board[2]
+            return True
 
-"""
-" {p1}{p2}{p3}\n"
-" {p4}{p5}{p6]\n"
-" {p7}{p8}{p9}\n")"""
+
+def masterCheckForWin():
+      global gameRunning
+      if checkForWinHrizont(board) or checkForWinRow(board) or \
+            checkForWinDiagonal(board):
+            print(f"The winner is {winner}")
+
+
+def checkTie(board):
+      global gameRunning
+      if "-" not in board:
+            newBoard(board)
+            print("It is a tie !!!")
+            gameRunning = False
+
+
+def switchPlayer():
+      global currentPlayer
+      if currentPlayer == "x":
+            currentPlayer = "o"
+      else:
+            currentPlayer = "x"
+
+def cpu(board):
+      while currentPlayer == "o":
+            position = random.randint(0, 8)
+            if board[position] == "-":
+                  board[position] = "o"
+                  switchPlayer()
+
+
+while gameRunning:
+      newBoard(board)
+      playerChoose(board)
+      masterCheckForWin()
+      checkTie(board)
+      switchPlayer()
+      cpu(board)
+      masterCheckForWin()
+      checkTie(board)
