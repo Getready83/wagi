@@ -20,6 +20,7 @@ def playerChoose(board):
             board[move - 1] = currentPlayer
       else:
             print("thise spot is occupied")
+            playerChoose(board)
 
 
 def checkForWinHrizont(board):
