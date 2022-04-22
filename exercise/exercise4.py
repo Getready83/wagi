@@ -31,3 +31,38 @@ print(True if 4 in list(litera.values())else False)
 pensje = {'ksiegowa': 5000, 'kierowca': 4500, 'recepcjonistka': 4000}
 
 print(sum(list(pensje.values())))
+
+# stwórz odwróconą listę language
+
+language = ['Python', 'Java', 'C#', 'Ruby']
+"""print(language)
+language.reverse()
+print(language)"""
+
+# wykorzystanie funkcji reversed() - zwraca list_reversiterator object
+# zamieniamy na liste
+language_reverse = reversed(language)
+print(list(language_reverse))
+
+# slicy !!!!
+language_reverse = language[::-1]
+print(language_reverse)
+
+language_reverse = []
+for languag in language:
+    language_reverse.insert(0,languag) # insert w tym wypadku zapisuje nowy język na 0 indeksie przy każdym przebiegu petli
+print(language_reverse)
+#
+odwroc_mnie = ['trudne', 'takie', 'bylo', 'nie', 'To']
+
+odwrocona = odwroc_mnie[::-1]
+odwrocona =[]
+for word in odwroc_mnie:
+    odwrocona.insert(0,word)
+
+odwrocona = reversed(odwroc_mnie)
+print(list(odwrocona))
+
+odwroc_mnie.reverse()
+odwrocona = odwroc_mnie
+print(odwrocona)
