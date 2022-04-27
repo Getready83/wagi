@@ -22,7 +22,6 @@ def playerChoose(board):
             print("thise spot is occupied")
             playerChoose(board)
 
-
 def checkForWinHrizont(board):
       global winner
       if board[0] == board[1] == board[2] and board[1] != "-":
@@ -34,7 +33,6 @@ def checkForWinHrizont(board):
       elif board[6] == board[7] == board[8] and board[8] != "-":
             winner = board[6]
             return True
-
 
 def checkForWinRow(board):
       global winner
