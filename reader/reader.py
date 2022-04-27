@@ -12,10 +12,12 @@ def sprawdz_wczytaj():
             )
     with open(sys.argv[1], newline="", encoding="utf-8")as plik:
         reader = csv.reader(plik)
+        print(reader)
         for linia in reader:
+            print(linia)
             zawartosc.append(linia)
 
-def zapisz():
+def write():
     with open(sys.argv[2], "w", newline="", encoding="utf-8") as plik:
         writer = csv.writer(plik)
         writer.writerows(zawartosc)
@@ -27,7 +29,7 @@ def wykonaj():
             print(n)
             akcja = n.split(",")
             akcja1.append(akcja)
-            for akcja in (akcja1):
+            for akcja in akcja1:
                 y = akcja[0]
                 x = akcja[1]
                 wartosc = akcja[2]
@@ -41,4 +43,4 @@ def wykonaj():
 
 sprawdz_wczytaj()
 wykonaj()
-zapisz()
+write()
