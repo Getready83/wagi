@@ -17,10 +17,12 @@ def sprawdz_wczytaj():
             print(linia)
             zawartosc.append(linia)
 
+
 def write():
     with open(sys.argv[2], "w", newline="", encoding="utf-8") as plik:
         writer = csv.writer(plik)
         writer.writerows(zawartosc)
+
 
 def wykonaj():
     if len(sys.argv) >= 3:
