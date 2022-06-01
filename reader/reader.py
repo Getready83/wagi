@@ -43,6 +43,7 @@ def wykonaj():
                     zawartosc[int(y)][int(x)] = wartosc
 
 
+
 sprawdz_wczytaj()
 wykonaj()
 write()
